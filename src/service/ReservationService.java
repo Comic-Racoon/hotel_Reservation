@@ -100,14 +100,18 @@ public class ReservationService {
     //----- get a customer reservation -------------------
 
     public Collection<Reservation> getCustomerReservation(Customer customer){
+        Collection<Reservation> customerRes = new ArrayList<>();
         for(Reservation res : reservations){
             if(res.getCustomer().equals(customer)){
-                return (Collection<Reservation>) res;
+//                return (Collection<Reservation>) res;
+                customerRes.add(res);
             }
 
         }
-        return (Collection<Reservation>) new IllegalArgumentException("Please check customer details ");
-    }
+//        return (Collection<Reservation>) new IllegalArgumentException("Please check customer details ");
+        System.out.println(customerRes);
+        return customerRes;
+   }
 
     //------------------------print all reservations-------------
 
@@ -118,7 +122,6 @@ public class ReservationService {
     //--------------------get all rooms --------------------------
 
     public Collection<IRoom> getAllRooms(){
-        System.out.println(rooms.values());
         return rooms.values();
     }
 }

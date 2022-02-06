@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class MainMenu {
     static final HotelResource hotelResource = HotelResource.getInstance();
-
+    static Scanner ip = new Scanner(System.in);
     public static void printMainMenu() {
         System.out.println("""
                     Welcome to the Hotel Reservation Application
@@ -100,6 +100,30 @@ public class MainMenu {
             createCustomer();
         }
     }
+
+    public static void findAndRserveARoom(){
+        System.out.println("Enter check in date: mm-dd-yyyy");
+        String inDate = ip.nextLine();
+
+        System.out.println("Enter check out date: mm-dd-yyyy");
+        String outDate = ip.nextLine();
+
+        Date checkIn = null;
+        Date checkOut = null;
+
+        if(inDate!= null && outDate != null){
+            try {
+                checkIn = new SimpleDateFormat("MM-dd-yyyy").parse(inDate);
+                checkOut = new SimpleDateFormat("MM-dd-yyyy").parse(outDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Collection<IRoom> availableRooms = hotelResource.findARoom(checkIn, checkOut);
+
+            reserveARoom(ip, checkIn,  checkOut,availableRooms );
+        }
+    }
     //-------------------------------------------------------------------------
     public static void main(String[] args) throws ParseException {
 
@@ -109,62 +133,39 @@ public class MainMenu {
 
     public static void rootmenu(){
 
-        Scanner ip = new Scanner(System.in);
+
 
         boolean onMain = true;
         while(onMain){
 
-            printMainMenu();
+            try{
+                printMainMenu();
 
-            int selectedOption = Integer.parseInt(ip.nextLine());
+                int selectedOption = Integer.parseInt(ip.nextLine());
 
-            if(selectedOption == 1){
-                System.out.println("Enter check in date: mm-dd-yyyy");
-                String inDate = ip.nextLine();
+                switch (selectedOption){
+                    case 1:
+                        findAndRserveARoom();
+                        break;
+                    case 2:
+                        System.out.println("Enter email to check your reservation");
+                        String email = ip.nextLine();
 
-                System.out.println("Enter check out date: mm-dd-yyyy");
-                String outDate = ip.nextLine();
+                        hotelResource.getCustomerReservation(email);
 
-                Date checkIn = null;
-                Date checkOut = null;
+                    case 3:
+                        createCustomer();
+                        break;
 
-                if(inDate!= null && outDate != null){
-                    try {
-                        checkIn = new SimpleDateFormat("MM-dd-yyyy").parse(inDate);
-                        checkOut = new SimpleDateFormat("MM-dd-yyyy").parse(outDate);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-
-                    Collection<IRoom> availableRooms = hotelResource.findARoom(checkIn, checkOut);
-
-                    reserveARoom(ip, checkIn,  checkOut,availableRooms );
+                    case 4:
+                        AdminMenu.adminMenu();
+                        break;
+                    case 5:
+                        break;
                 }
 
-            }
-
-            if(selectedOption == 2){
-                System.out.println("Enter email to check your reservation");
-                String email = ip.nextLine();
-
-                hotelResource.getCustomerReservation(email);
-            }
-
-            if(selectedOption == 3){
-                createCustomer();
-            }
-
-            if(selectedOption == 4){
-                AdminMenu.adminMenu();
-            }
-
-            if(selectedOption == 5){
-                break;
-            }
-
-            else{
-                System.out.println("Invalid Input \n Please select valid Input");
-
+            }catch (Exception e){
+                System.out.println("Please enter a valid option");
             }
 
         }

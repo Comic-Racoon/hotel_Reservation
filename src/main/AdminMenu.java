@@ -29,6 +29,52 @@ public class AdminMenu {
                 """);
 
     }
+
+    static void seeAllCustomers(){
+        Collection<Customer> allCustomers = adminResources.getAllCustomers();
+
+        if(allCustomers.isEmpty()){
+            System.out.println("No Customer");
+        }
+        else{
+            for (Customer allCustomer : allCustomers) {
+                System.out.println(allCustomer);
+            }
+
+        }
+    }
+
+    static void seeAllRooms(){
+        Collection<IRoom> rooms = adminResources.getAllRooms();
+
+        if (rooms.isEmpty()){
+            System.out.println(" Add some rooms pls! ");
+        }
+        else{
+            for (IRoom room : rooms) {
+                System.out.println(room);
+            }
+
+        }
+    }
+
+    static void addARoom(){
+        System.out.println("Enter Room Number: ");
+        String roomNo = ip.nextLine();
+
+        System.out.println("Enter A Price: ");
+        Double price = Double.valueOf(ip.nextLine());
+
+        System.out.println("Enter A Room Type: SINGLE/DOUBLE");
+        RoomType roomType = RoomType.valueOf(ip.nextLine());
+
+        List<IRoom> addRoom = new ArrayList<>();
+
+        IRoom newRoom = new Room(roomNo,price,roomType,true);
+        addRoom.add(newRoom);
+
+        adminResources.addRoom(addRoom);
+    }
     public static void adminMenu(){
         boolean onAdminMenu = true;
 
@@ -38,66 +84,25 @@ public class AdminMenu {
 
                 int selectedOption = Integer.parseInt(ip.nextLine());
 
-                if(selectedOption == 1){
-                    //See all Customers
-                    Collection<Customer> allCustomers = adminResources.getAllCustomers();
-
-                    if(allCustomers.isEmpty()){
-                        System.out.println("No Customer");
-                    }
-                    else{
-                        for (Customer allCustomer : allCustomers) {
-                            System.out.println(allCustomer);
-                        }
-
-                    }
+                switch (selectedOption){
+                    case 1:
+                        seeAllCustomers();
+                        break;
+                    case 2:
+                        seeAllRooms();
+                        break;
+                    case 3:
+                        adminResources.displayAllReservations();
+                        break;
+                    case 4:
+                        addARoom();
+                        break;
+                    case 5:
+                        onAdminMenu = false;
+                        MainMenu.rootmenu();
+                        break;
                 }
 
-                if(selectedOption == 2){
-                    //See all Rooms
-                    Collection<IRoom> rooms = adminResources.getAllRooms();
-
-                    if (rooms.isEmpty()){
-                        System.out.println(" Add some rooms pls! ");
-                    }
-                    else{
-                        for (IRoom room : rooms) {
-                            System.out.println(room);
-                        }
-
-                    }
-
-                }
-
-                if(selectedOption == 3){
-                    //see all Reservations
-                    adminResources.displayAllReservations();
-                }
-
-                if(selectedOption == 4){
-                    //Add a Room
-
-                    System.out.println("Enter Room Number: ");
-                    String roomNo = ip.nextLine();
-
-                    System.out.println("Enter A Price: ");
-                    Double price = Double.valueOf(ip.nextLine());
-
-                    System.out.println("Enter A Room Type: SINGLE/DOUBLE");
-                    RoomType roomType = RoomType.valueOf(ip.nextLine());
-
-                    List<IRoom> addRoom = new ArrayList<>();
-
-                    IRoom newRoom = new Room(roomNo,price,roomType,true);
-                    addRoom.add(newRoom);
-
-                    adminResources.addRoom(addRoom);
-                }
-
-                if (selectedOption == 5){
-                    onAdminMenu = false;
-                    MainMenu.rootmenu();
-                }
             } catch (IllegalArgumentException e) {
                 System.out.println("Please Enter A Valid Option :");
                 adminMenu();
