@@ -77,12 +77,47 @@ public class ReservationService {
         Collection<IRoom> allRooms = rooms.values();
 
         for(IRoom notAvailableRoom: notAvailableRooms){
-            allRooms.removeIf(room -> notAvailableRoom.equals(room));
+            allRooms.removeIf(notAvailableRoom::equals);
         }
 
         return allRooms;
     }
 
+
+
+
+    Date daysNext (Date checkInDate){
+        ArrayList<Date> arr = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(checkInDate);
+        calendar.add(Calendar.DATE, 7);
+
+        return calendar.getTime();
+    }
+
+
+
+
+//-----------               find available dates  -----------------
+    public ArrayList futureAvailableDate(Date checkInDate){
+        Date finalDays = daysNext(checkInDate);
+
+        Collection<Reservation> alreadyBookedRooms =  reservations;
+        ArrayList futureDates = new ArrayList();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(checkInDate);
+        while (cal.getTime().before(finalDays)) {
+            cal.add(Calendar.DATE, 1);
+            for (Reservation alreadyBookedRoom : alreadyBookedRooms) {
+                if(!cal.equals(alreadyBookedRoom.getCheckInDate())){
+                    futureDates.add(cal.getTime());
+                }
+            }
+        }
+        return futureDates;
+    }
 
 
 

@@ -52,21 +52,30 @@ public class MainMenu {
 
                     System.out.println("What room would you like to reserve");
                     System.out.println(availableRooms);
-                    String roomNumber = ip.nextLine();
 
-                    for(IRoom room :availableRooms){
-                        if (room.getRoomNumber().equals(roomNumber)){
-                            IRoom selectedRoom = hotelResource.getRoom(roomNumber);
+                    if(availableRooms.isEmpty()){
 
-                            Reservation reservation = hotelResource.bookARoom(emailAssociated,selectedRoom,checkIn,checkOut);
+                        System.out.println(hotelResource.getFutureAvailableDatesForReservation(checkIn));
+                    }
+                    else {
+                        String roomNumber = ip.nextLine();
 
-                            System.out.println("Your Reservation is successful");
-                        }
-                        else {
-                            System.out.println("Room Not Found, Start reservation again");
-                            rootmenu();
+                        for(IRoom room :availableRooms){
+                            if (room.getRoomNumber().equals(roomNumber)){
+                                IRoom selectedRoom = hotelResource.getRoom(roomNumber);
+
+                                Reservation reservation = hotelResource.bookARoom(emailAssociated,selectedRoom,checkIn,checkOut);
+
+                                System.out.println("Your Reservation is successful");
+                            }
+                            else {
+                                System.out.println("get_Dates_when_room_available");
+                                System.out.println("Room Not Found, Start reservation again");
+                                rootmenu();
+                            }
                         }
                     }
+
 
                 }
 
