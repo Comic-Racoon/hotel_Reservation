@@ -3,7 +3,9 @@ package model.reservation;
 import model.customer.Customer;
 import model.room.IRoom;
 
+import javax.management.ObjectName;
 import java.util.Date;
+import java.util.Objects;
 
 public class Reservation {
     private Customer customer;
@@ -55,5 +57,22 @@ public class Reservation {
     public String toString(){
         return customer + "has reservations on" + checkInDate +"->" + checkOutDate +"on room no "+room;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation res = (Reservation) o;
+        return Objects.equals(customer, res.customer)
+                && Objects.equals(room, res.room)
+                && Objects.equals(checkInDate, res.checkInDate)
+                && Objects.equals(checkOutDate, res.checkOutDate);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(customer, room, checkInDate, checkOutDate);
+    }
+
 
 }

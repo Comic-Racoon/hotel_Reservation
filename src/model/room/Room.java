@@ -7,13 +7,13 @@ public class Room implements IRoom{
     private String roomNumber;
     private Double price;
     private RoomType enumeration;
-    private Boolean booked;
+    private boolean isFree;
 
-    public Room(String roomNumber, Double price, RoomType enumeration, boolean booked) {
+    public Room(String roomNumber, Double price, RoomType enumeration, boolean isFree) {
         this.roomNumber = roomNumber;
         this.price = price;
         this.enumeration = enumeration;
-        this.booked = booked;
+        this.isFree = isFree;
     }
 
     public void setRoomNumber(String roomNumber) {
@@ -28,6 +28,8 @@ public class Room implements IRoom{
     public void setEnumeration(RoomType enumeration) {
         this.enumeration = enumeration;
     }
+
+    public void setFree(boolean free) {isFree =free;}
 
     @Override
     public String getRoomNumber() {
@@ -46,25 +48,27 @@ public class Room implements IRoom{
 
     @Override
     public boolean isFree() {
-        return booked;
+        return isFree;
     }
 
     @Override
     public String toString(){
-        return "Room Number :-> " + roomNumber +"\n" + "Room Type :-> " + enumeration + "\n" + "Room Price :->" + price +"\n"+ "Availability :-> "+ booked;
+        return "Room Number :-> " + roomNumber +"\n" + "Room Type :-> " + enumeration + "\n" + "Room Price :->" + price +"\n"+ "Is it free :-> "+ isFree;
 
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Room)) return false;
+        //if (!(o instanceof Room room)) return false;
+        if(o == null || getClass() != o.getClass()) return false;
         Room room = (Room) o;
-        return Objects.equals(roomNumber, room.roomNumber) && Objects.equals(price, room.price) ;
+        return Objects.equals(roomNumber, room.roomNumber) && Objects.equals(price, room.price)
+                && Objects.equals(enumeration, room.enumeration) && Objects.equals(isFree, room.isFree);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roomNumber, price);
+        return Objects.hash(roomNumber, price, enumeration, isFree);
     }
 }

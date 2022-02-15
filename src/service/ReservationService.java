@@ -56,8 +56,6 @@ public class ReservationService {
 
     //---------- find a room ---------------------------------
 
-
-
     public Collection<IRoom> findARoom(Date checkInDate, Date checkOutDate){
 
         // ref:- https://knowledge.udacity.com/questions/596090
@@ -65,23 +63,24 @@ public class ReservationService {
         //The purpose of the method is to find
         // the available rooms between the given checkInDate and
 
+        List<IRoom> allRooms = new ArrayList<>(rooms.values());
+
         Collection<Reservation> alreadyBookedRooms =  reservations;
-        Collection<IRoom> notAvailableRooms = new HashSet<>();
 
         for (Reservation alreadyBookedRoom : alreadyBookedRooms) {
             if( checkInDate.before(alreadyBookedRoom.getCheckOutDate()) && checkOutDate.after(alreadyBookedRoom.getCheckInDate())){
-                notAvailableRooms.add(alreadyBookedRoom.getRoom());
+//                notAvailableRooms.add(alreadyBookedRoom.getRoom());
+                allRooms.remove(alreadyBookedRoom.getRoom());
             }
         }
 
-        Collection<IRoom> allRooms = rooms.values();
 
-        for(IRoom notAvailableRoom: notAvailableRooms){
-            allRooms.removeIf(notAvailableRoom::equals);
-        }
+//        for(IRoom notAvailableRoom: notAvailableRooms){
+//            allRooms.removeIf(notAvailableRoom::equals);
+//        }
 
         return allRooms;
-    }
+    }  //// find All Rooms
 
 
 
@@ -100,24 +99,31 @@ public class ReservationService {
 
 
 //-----------               find available dates  -----------------
-    public ArrayList futureAvailableDate(Date checkInDate){
+    public void futureAvailableDate(Date checkInDate){
         Date finalDays = daysNext(checkInDate);
 
         Collection<Reservation> alreadyBookedRooms =  reservations;
-        ArrayList futureDates = new ArrayList();
+
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(checkInDate);
         while (cal.getTime().before(finalDays)) {
             cal.add(Calendar.DATE, 1);
             for (Reservation alreadyBookedRoom : alreadyBookedRooms) {
-                if(!cal.equals(alreadyBookedRoom.getCheckInDate())){
-                    futureDates.add(cal.getTime());
+                if(cal.after(alreadyBookedRoom.getCheckInDate())){
+                    System.out.println(cal.getTime());
                 }
+
             }
         }
-        return futureDates;
+
     }
+
+    public List<Reservation> getAllReservation(){
+        return new ArrayList<>(reservations);
+    }
+
+
 
 
 
@@ -136,8 +142,10 @@ public class ReservationService {
 
     public Collection<Reservation> getCustomerReservation(Customer customer){
         Collection<Reservation> customerRes = new ArrayList<>();
+
+
         for(Reservation res : reservations){
-            if(res.getCustomer().equals(customer)){
+            if(res.getCustomer().getEmail().equals(customer.getEmail())){
 //                return (Collection<Reservation>) res;
                 customerRes.add(res);
             }

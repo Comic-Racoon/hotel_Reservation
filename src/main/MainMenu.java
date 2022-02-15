@@ -3,17 +3,19 @@ package main;
 import api.HotelResource;
 import model.reservation.Reservation;
 import model.room.IRoom;
+import service.ReservationService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Locale;
+
 import java.util.Scanner;
 
 
 public class MainMenu {
     static final HotelResource hotelResource = HotelResource.getInstance();
+    static final ReservationService reservationService = ReservationService.getInstance();
     static Scanner ip = new Scanner(System.in);
     public static void printMainMenu() {
         System.out.println("""
@@ -40,7 +42,7 @@ public class MainMenu {
 
             String haveAccount = ip.nextLine();
 
-            if (haveAccount.equals("y")) {
+            if (haveAccount.toLowerCase().equals("y")) {
 
                 System.out.println("Enter The Email Associated With The Account");
                 String emailAssociated  = ip.nextLine();
@@ -55,7 +57,28 @@ public class MainMenu {
 
                     if(availableRooms.isEmpty()){
 
-                        System.out.println(hotelResource.getFutureAvailableDatesForReservation(checkIn));
+                        System.out.println("No rooms available at this Date");
+
+                        long diff =  checkOut.getTime() - checkIn.getTime();
+                        long resss = 0;
+
+                        for (Reservation res: reservationService.getAllReservation()){
+                            while (true){
+                                resss = res.getCheckOutDate().getTime()+diff;
+                                Date date = new Date(resss);
+                                Date date1 = res.getCheckOutDate();
+                                Date date2 = date;
+
+                                if( roomExist(date1, date2)){
+                                    System.out.println(res.getRoom());
+                                    System.out.println("Will be available on: " + date1);
+
+                                    return;
+                                }
+                            }
+                        }
+
+                        hotelResource.getFutureAvailableDatesForReservation(checkIn);
                     }
                     else {
                         String roomNumber = ip.nextLine();
@@ -64,7 +87,8 @@ public class MainMenu {
                             if (room.getRoomNumber().equals(roomNumber)){
                                 IRoom selectedRoom = hotelResource.getRoom(roomNumber);
 
-                                Reservation reservation = hotelResource.bookARoom(emailAssociated,selectedRoom,checkIn,checkOut);
+                                Reservation reservation = hotelResource
+                                        .bookARoom(emailAssociated,selectedRoom,checkIn,checkOut);
 
                                 System.out.println("Your Reservation is successful");
                             }
@@ -87,6 +111,17 @@ public class MainMenu {
         } else {
             rootmenu();
         }
+    }
+
+    private static boolean roomExist(Date date1, Date date2) {
+        for (Reservation reservation: reservationService.getAllReservation()){
+            if(date1.before(reservation.getCheckOutDate())
+                    && date2.after(reservation.getCheckInDate())){
+                return false;
+
+            }
+        }
+        return true;
     }
 
     public static void createCustomer(){
@@ -161,7 +196,7 @@ public class MainMenu {
                         String email = ip.nextLine();
 
                         hotelResource.getCustomerReservation(email);
-
+                        break;
                     case 3:
                         createCustomer();
                         break;
